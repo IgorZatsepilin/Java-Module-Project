@@ -6,64 +6,21 @@ import java.util.Scanner;
 
 public class Main {
 
-
     public static void main(String[] args) {
         String name; //название продукта
         double price;// стоимость продукта
         int peopleAmount; //кол-во человек
 
+
         Product newProduct = new Product(); //создаем экземпляр класса Продукт для записи данных
-        System.out.println("На скольких человек необходимо разделить счёт?");
 
 
-        do { //цикл ввода и проверки кол-ва человек
-            Scanner scanner = new Scanner(System.in);
+        peopleAmount = peopleAmountInputCheck (); //ввод и проверка формата ввода кол-ва человек
+        do{
+       name = inputNameFormatCheck (); //ввод и проерка формата ввода названия продукта
+       newProduct.nameList = newProduct.nameList + name + "\n"; //добавляем введенный товар в список товаров
 
-            while (!scanner.hasNextInt()) { //проверка ввода корректного значения Int
-                System.out.println("Введенное значение некорректно.");
-                System.out.println("На скольких человек необходимо разделить счёт ?");
-                scanner.next();
-            }
-            peopleAmount = scanner.nextInt();
-            if (peopleAmount == 1) {
-                System.out.println("Ошибка! Количество человек не может быть равно 1, так как в этом случае нет смысла ничего считать и делить.");
-                System.out.println("Введите корректное число. На скольких человек необходимо разделить счёт?");
-            }
-            if (peopleAmount < 1) {
-                System.out.println("Ошибка! Количество человек не может быть отрицательным или нулевым.");
-                System.out.println("Введите корректное число. На скольких человек необходимо разделить счёт?");
-            }
-            if (peopleAmount > 1) {
-                System.out.println("Отлично! Число человек = " + peopleAmount);
-            }
-
-        } while (peopleAmount <= 1); // окончание цикла ввода и проверки кол-ва человек
-        do { // полный цикл ввода названия и стоимости товара
-            System.out.println("Введите название товара:");
-            Scanner scanner = new Scanner(System.in);
-            name = scanner.nextLine();
-            while (name.trim().equals("")) { //проверка пустого ввода
-                System.out.println("Вы ничего не ввели. Введите название товара:");
-                name = scanner.nextLine();
-            }
-                     newProduct.nameList = newProduct.nameList + name + "\n"; //добавляем введенный товар в список товаров
-
-            do { //  цикл ввода стоимости и проверки формата ввода
-                System.out.println("Введите стоимость товара в формате 'рубли.копейки', например, '10.45':");
-                Scanner scannerPrice = new Scanner(System.in);
-                while (!scannerPrice.hasNextDouble()) { //проверка на корректность введенного формата Дробное значение
-                    System.out.println("Введенное значение некорректно.");
-                    System.out.println("Введите стоимость товара в формате 'рубли.копейки', например, '10.45':");
-                    scannerPrice.next();
-                }
-                price = scannerPrice.nextDouble();
-
-                int digitsAfterDot = BigDecimal.valueOf(price).scale(); //определяем кол-во знаков после запятой
-                if (digitsAfterDot == 2) { //проверка на кол-во знаков после запятой в соответствии с требуемым форматом (два знака после запятой)
-                    break;
-                }
-                System.out.println("Введенное значение некорректно. Кол-во знаков после запятой не равно 2.");
-            } while (true); // окончание цикл ввода стоимости и проверки формата ввода
+           price = inputPriceFormatCheck (); //ввод и проверка формата ввода Стоимости продукта
 
             newProduct.sum = newProduct.sum + price; //добавляем стоимость текущего товара к суммарной стоимости товаров
             System.out.println("Товар добавлен в калькулятор. Хотите ли добавить еще один товар? Введите любой символ (если хотите) или Завершить (если не хотите)");
@@ -73,6 +30,7 @@ public class Main {
             if (strLower.equals("завершить")) { //проверяем "завершить"
                 break;
             }
+
         } while (true); // закончен полный цикл ввода товаров и стоимости
 
         System.out.println("Добавленные товары:");
@@ -81,121 +39,64 @@ public class Main {
         //определяем падеж слова "рубль":
         newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
         System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh); //+ "флор: " + newProduct.z + ", numDigits: " + newProduct.numDigits + ", один знак: " + newProduct.y + ", два знака: " + newProduct.x);
- //ТеСТ
-        newProduct.sumPerPerson = 0; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
 
-        newProduct.sumPerPerson = 1; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 2; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 3; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 4; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 5; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 10; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 11; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 12; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
+    }
+    static int peopleAmountInputCheck (){
+       String question = "На скольких человек необходимо разделить счёт?";
+       String request = "Введите корректное число. ";
+        System.out.println(question);
+        do {
+            Scanner scanner = new Scanner(System.in);
 
-        newProduct.sumPerPerson = 19; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 20; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 21; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 22; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 25; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 30; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 100; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 101; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 102; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 105; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 110; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 111; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 112; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 115; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 120; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 121; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 122; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 125; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
-        newProduct.sumPerPerson = 130; // вычисляем сумму на человека
-        //определяем падеж слова "рубль":
-        newProduct.padezh = Product.definePadezh(newProduct.sumPerPerson, newProduct.twoLastDigits, newProduct.oneLastDigit, newProduct.bezDrobnoyInt);
-        System.out.println("Сумма, которую должен заплатить каждый человек, равна: " + String.format("%.2f", newProduct.sumPerPerson) + newProduct.padezh);
+            while (!scanner.hasNextInt()) { //проверка ввода корректного значения Int
+                System.out.println("Введенное значение некорректно.\n"+question);
+                scanner.next();
+            }
+            int peopleAmountInput = scanner.nextInt();
+            if (peopleAmountInput == 1) {
+                System.out.println("Ошибка! Количество человек не может быть равно 1, так как в этом случае нет смысла ничего считать и делить.\n"+request +" "+ question);
+            }
+            if (peopleAmountInput < 1) {
+                System.out.println("Ошибка! Количество человек не может быть отрицательным или нулевым.\n"+request +" "+ question);
+            }
+            if (peopleAmountInput > 1) {
+                System.out.println("Отлично! Число человек = " + peopleAmountInput);
+                return peopleAmountInput;
+            }
+
+        } while (true);
+    }
+   static String inputNameFormatCheck () {
+String request = "Введите название товара:";
+            System.out.println(request);
+            Scanner scanner = new Scanner(System.in);
+            String InputName = scanner.nextLine();
+            while (InputName.trim().equals("")) { //проверка пустого ввода
+                System.out.println("Вы ничего не ввели. "+request);
+                InputName = scanner.nextLine();
+            }
+            return InputName;
+        }
+
+   static Double inputPriceFormatCheck (){
+       String question = "Введите стоимость товара в формате 'рубли.копейки', например, '10.45':";
+        do {
+            System.out.println(question);
+            Scanner scannerPrice = new Scanner(System.in);
+            while (!scannerPrice.hasNextDouble()) { //проверка на корректность введенного формата Дробное значение
+                System.out.println("Введенное значение некорректно.\n"+question);
+                scannerPrice.next();
+            }
+           Double priceInput = scannerPrice.nextDouble();
+
+            int digitsAfterDot = BigDecimal.valueOf(priceInput).scale(); //определяем кол-во знаков после запятой
+            if (digitsAfterDot == 2) { //проверка на кол-во знаков после запятой в соответствии с требуемым форматом (два знака после запятой)
+               return priceInput;
+
+            }
+            System.out.println("Введенное значение некорректно. Кол-во знаков после запятой не равно 2.");
+        } while (true); // окончание цикл ввода стоимости и проверки формата ввода
+
 
     }
     }
